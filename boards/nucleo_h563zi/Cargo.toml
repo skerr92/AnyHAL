@@ -1,0 +1,18 @@
+[package]
+name = "anyhal-board-nucleo-h563zi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+build = "build.rs"
+
+[dependencies]
+anyhal = { path = "../..", default-features = false }
+anyhal-stm32h563 = { path = "../../platforms/stm32h563" }
+
+[lib]
+path = "mod.rs"
+
+[[example]]
+name = "nucleo_h563zi_blink"
+path = "examples/blink.rs"
+

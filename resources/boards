@@ -1,0 +1,12 @@
+# Board catalog. Each board selects its Cargo manifest, Rust target, default
+# example, and optional post-link artifact format.
+ANYHAL_BOARDS += feather-samd51p19 nucleo-h563zi
+
+anyhal.feather-samd51p19.manifest := boards/feather_samd51p19/Cargo.toml
+anyhal.feather-samd51p19.triple := thumbv7em-none-eabihf
+anyhal.feather-samd51p19.example := feather_blink
+anyhal.feather-samd51p19.artifact := uf2
+
+anyhal.nucleo-h563zi.manifest := boards/nucleo_h563zi/Cargo.toml
+anyhal.nucleo-h563zi.triple := thumbv8m.main-none-eabihf
+anyhal.nucleo-h563zi.example := nucleo_h563zi_blink

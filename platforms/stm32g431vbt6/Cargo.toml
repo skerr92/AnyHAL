@@ -1,0 +1,18 @@
+[package]
+name = "anyhal-stm32g431vbt6"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+build = "build.rs"
+
+[dependencies]
+anyhal = { path = "../..", default-features = false }
+stm32g4 = { version = "0.16.0", default-features = false, features = ["stm32g431"] }
+
+[lib]
+path = "mod.rs"
+
+[[example]]
+name = "stm32g431vbt6_smoke"
+path = "examples/smoke.rs"
+

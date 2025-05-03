@@ -1,0 +1,45 @@
+[workspace]
+members = [
+    "platforms/samd51p19a",
+    "platforms/stm32h563",
+    "platforms/stm32g431vbt6",
+    "boards/feather_samd51p19",
+    "boards/nucleo_h563zi",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[package]
+name = "anyhal"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Portable embedded HAL contracts and host-side test doubles"
+
+[features]
+default = ["host"]
+host = []
+
+[lib]
+path = "src/lib.rs"
+
+[[example]]
+name = "host_smoke"
+path = "src/examples/host_smoke.rs"
+required-features = ["host"]
+
+[[bin]]
+name = "anyhal-uf2"
+path = "tools/anyhal-uf2.rs"
+required-features = ["host"]
+
+[profile.release]
+codegen-units = 1
+debug = 2
+lto = true
+opt-level = "s"
+panic = "abort"

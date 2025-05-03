@@ -1,0 +1,42 @@
+[package]
+name = "anyhal-board-feather-samd51p19"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+build = "build.rs"
+
+[dependencies]
+anyhal = { path = "../..", default-features = false }
+anyhal-samd51p19a = { path = "../../platforms/samd51p19a" }
+
+[lib]
+path = "mod.rs"
+
+[[example]]
+name = "feather_blink"
+path = "examples/blink.rs"
+
+[[example]]
+name = "feather_gpio_input"
+path = "examples/gpio_input.rs"
+
+[[example]]
+name = "feather_gpio_mux"
+path = "examples/gpio_mux.rs"
+
+[[example]]
+name = "feather_i2c_scan"
+path = "examples/i2c_scan.rs"
+
+[[example]]
+name = "feather_spi_pin_id"
+path = "examples/spi_pin_id.rs"
+
+[[example]]
+name = "feather_usb_console"
+path = "examples/usb_console.rs"
+
+[[example]]
+name = "feather_spi_loopback"
+path = "examples/spi_loopback.rs"
+

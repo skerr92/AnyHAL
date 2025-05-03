@@ -1,0 +1,10 @@
+# Raw STM32 platform catalog.
+ANYHAL_PLATFORMS += stm32h563 stm32g431vbt6
+
+anyhal.stm32h563.manifest := platforms/stm32h563/Cargo.toml
+anyhal.stm32h563.triple := thumbv8m.main-none-eabihf
+anyhal.stm32h563.example := stm32h563_smoke
+
+anyhal.stm32g431vbt6.manifest := platforms/stm32g431vbt6/Cargo.toml
+anyhal.stm32g431vbt6.triple := thumbv7em-none-eabihf
+anyhal.stm32g431vbt6.example := stm32g431vbt6_smoke

@@ -1,0 +1,8 @@
+device ATSAMD51P19A
+si SWD
+speed 4000
+connect
+loadfile target/thumbv7em-none-eabihf/release/examples/feather_blink
+reset
+go
+exit

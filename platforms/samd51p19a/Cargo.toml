@@ -1,0 +1,23 @@
+[package]
+name = "anyhal-samd51p19a"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+build = "build.rs"
+
+[dependencies]
+anyhal = { path = "../..", default-features = false }
+atsamd51p19a = { package = "atsamd51p", version = "0.14.2" }
+atsamd-hal = { version = "0.23.3", default-features = false, features = ["samd51p", "usb"] }
+usb-device = "0.3.2"
+usbd-serial = "0.2.2"
+static_cell = "2.1.1"
+cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
+
+[lib]
+path = "mod.rs"
+
+[[example]]
+name = "samd51p19a_smoke"
+path = "examples/smoke.rs"
+
