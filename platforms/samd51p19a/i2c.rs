@@ -1,8 +1,8 @@
-//! Blocking SERCOM1 I2C controller for PA16/PA17.
+//! Blocking SERCOM1 I2C controller.
 
-use crate::{AlternatePin, Clocks};
+use crate::{routes, AlternatePin, Clocks};
 use anyhal::hal::{
-    gpio::{AlternateConfig, AlternateFunction, OutputType, Pin, Port, Pull, Speed},
+    gpio::{AlternateConfig, AlternateFunction, OutputType, Pin, Pull, Speed},
     i2c::I2cBus,
     Error, Result,
 };
@@ -20,8 +20,19 @@ impl Sercom1I2c {
     ///
     /// External pull-up resistors are required. The caller must exclusively own
     /// SERCOM1, both pins, and their clock channel.
+    ///
+    /// # Safety
+    ///
+    /// The caller must ensure exclusive ownership of SERCOM1, the supplied
+    /// pins, their PORT mux state, and the SERCOM1 generic-clock channel.
     pub unsafe fn claim(sda: Pin, scl: Pin, clocks: Clocks, frequency_hz: u32) -> Result<Self> {
-        if sda != Pin::new(Port::A, 16) || scl != Pin::new(Port::A, 17) {
+        let sda_route = routes::sercom1(sda).ok_or(Error::InvalidArgument)?;
+        let scl_route = routes::sercom1(scl).ok_or(Error::InvalidArgument)?;
+        if sda_route.pad != 0
+            || scl_route.pad != 1
+            || sda_route.function != scl_route.function
+            || sda_route.ioset != scl_route.ioset
+        {
             return Err(Error::InvalidArgument);
         }
         let divider = clocks
@@ -34,7 +45,7 @@ impl Sercom1I2c {
         }
 
         let pin_config = AlternateConfig {
-            function: AlternateFunction::new(2).ok_or(Error::Platform)?,
+            function: AlternateFunction::new(sda_route.function).ok_or(Error::Platform)?,
             pull: Pull::None,
             output_type: OutputType::PushPull,
             speed: Speed::VeryHigh,

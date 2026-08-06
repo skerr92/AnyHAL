@@ -5,6 +5,10 @@ edition.workspace = true
 license.workspace = true
 build = "build.rs"
 
+[features]
+package-tfbga120 = []
+package-tqfp128 = []
+
 [dependencies]
 anyhal = { path = "../..", default-features = false }
 atsamd51p19a = { package = "atsamd51p", version = "0.14.2" }
@@ -20,4 +24,3 @@ path = "mod.rs"
 [[example]]
 name = "samd51p19a_smoke"
 path = "examples/smoke.rs"
-

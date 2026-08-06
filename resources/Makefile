@@ -13,8 +13,9 @@ anyhal.host.example := host_smoke
 
 ANYHAL_MANIFEST = $(anyhal.$(ANYHAL_TARGET).manifest)
 ANYHAL_TRIPLE = $(anyhal.$(ANYHAL_TARGET).triple)
+ANYHAL_FEATURES = $(anyhal.$(ANYHAL_TARGET).features)
 ANYHAL_SELECTED_EXAMPLE = $(if $(ANYHAL_EXAMPLE),$(ANYHAL_EXAMPLE),$(anyhal.$(ANYHAL_TARGET).example))
-ANYHAL_BUILD_ARGS = --manifest-path $(ANYHAL_MANIFEST) $(if $(ANYHAL_TRIPLE),--release --target $(ANYHAL_TRIPLE),)
+ANYHAL_BUILD_ARGS = --manifest-path $(ANYHAL_MANIFEST) $(if $(ANYHAL_TRIPLE),--release --target $(ANYHAL_TRIPLE),) $(if $(ANYHAL_FEATURES),--features $(ANYHAL_FEATURES),)
 ANYHAL_EXAMPLE_ARG = $(if $(ANYHAL_SELECTED_EXAMPLE),--example $(ANYHAL_SELECTED_EXAMPLE),)
 
 UF2_TARGET ?= $(if $(filter-out host,$(ANYHAL_TARGET)),$(ANYHAL_TARGET),feather-samd51p19)

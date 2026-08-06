@@ -7,7 +7,7 @@ build = "build.rs"
 
 [dependencies]
 anyhal = { path = "../..", default-features = false }
-anyhal-samd51p19a = { path = "../../platforms/samd51p19a" }
+anyhal-samd51p19a = { path = "../../platforms/samd51p19a", features = ["package-tfbga120"] }
 
 [lib]
 path = "mod.rs"
@@ -40,3 +40,18 @@ path = "examples/usb_console.rs"
 name = "feather_spi_loopback"
 path = "examples/spi_loopback.rs"
 
+[[example]]
+name = "feather_pwm_sweep"
+path = "examples/pwm_sweep.rs"
+
+[[example]]
+name = "feather_adc_monitor"
+path = "examples/adc_monitor.rs"
+
+[[example]]
+name = "feather_dac_wave"
+path = "examples/dac_wave.rs"
+
+[[example]]
+name = "feather_pulse_capture"
+path = "examples/pulse_capture.rs"

@@ -1,8 +1,8 @@
-//! Blocking SERCOM4 SPI controller for PB12/PB13/PB14.
+//! Blocking SERCOM4 SPI controller.
 
-use crate::{AlternatePin, Clocks};
+use crate::{routes, AlternatePin, Clocks};
 use anyhal::hal::{
-    gpio::{AlternateConfig, AlternateFunction, OutputType, Pin, Port, Pull, Speed},
+    gpio::{AlternateConfig, AlternateFunction, OutputType, Pin, Pull, Speed},
     spi::{BitOrder, Config, Phase, Polarity, SpiBus},
     Error, Result,
 };
@@ -30,9 +30,16 @@ impl Sercom4Spi {
         clocks: Clocks,
         config: Config,
     ) -> Result<Self> {
-        if mosi != Pin::new(Port::B, 12)
-            || sck != Pin::new(Port::B, 13)
-            || miso != Pin::new(Port::B, 14)
+        let mosi_route = routes::sercom4(mosi).ok_or(Error::InvalidArgument)?;
+        let sck_route = routes::sercom4(sck).ok_or(Error::InvalidArgument)?;
+        let miso_route = routes::sercom4(miso).ok_or(Error::InvalidArgument)?;
+        if mosi_route.pad != 0
+            || sck_route.pad != 1
+            || miso_route.pad != 2
+            || mosi_route.function != sck_route.function
+            || mosi_route.function != miso_route.function
+            || mosi_route.ioset != sck_route.ioset
+            || mosi_route.ioset != miso_route.ioset
         {
             return Err(Error::InvalidArgument);
         }
@@ -51,7 +58,7 @@ impl Sercom4Spi {
         }
 
         let pin_config = AlternateConfig {
-            function: AlternateFunction::new(2).ok_or(Error::Platform)?,
+            function: AlternateFunction::new(mosi_route.function).ok_or(Error::Platform)?,
             pull: Pull::None,
             output_type: OutputType::PushPull,
             speed: Speed::VeryHigh,

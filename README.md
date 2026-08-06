@@ -17,6 +17,10 @@ AnyHAL currently provides portable contracts for:
 - Blocking delays
 - Blocking I2C controller transactions
 - Configurable blocking SPI bus transactions
+- Normalized single-channel PWM output
+- Blocking one-shot ADC sampling with reference-aware conversion
+- Reference-aware single-channel DAC voltage output
+- Non-blocking period and high-pulse-width capture
 - Polling, non-blocking serial consoles
 - Host-side peripheral fakes and executable contract tests
 - Bare-metal startup, linker layouts, and board-specific firmware examples
@@ -42,6 +46,17 @@ and board test applications belong under `boards/<board>/`.
 
 Unsafe code is restricted to hardware ownership, startup, and register-access
 boundaries. Portable contracts remain safe Rust.
+
+Platform pin routing is capability-driven. Each chip package keeps peripheral,
+pad/channel, and mux-function mappings in one route table; drivers resolve the
+pins supplied by board code and reject combinations the selected peripheral
+cannot use. Board aliases never appear in platform drivers.
+
+Package selection is explicit because a chip name alone does not describe
+which pads are physically bonded. For example, `anyhal-samd51p19a` requires
+exactly one of `package-tfbga120` or `package-tqfp128`. Its checked-in route
+catalog is generated from Microchip's device-pack ATDF, including package ball
+or lead positions and peripheral mux capabilities.
 
 ## Prerequisites
 
@@ -80,10 +95,11 @@ make uf2 UF2_TARGET=<catalog-id> ANYHAL_EXAMPLE=<cargo-example>
 `fresh-build` and `fresh-uf2` run workspace-scoped `cargo clean` before
 building. Only targets declaring `artifact := uf2` accept the `uf2` command.
 
-The equivalent direct Cargo form is:
+The equivalent direct Cargo form is (include the platform's exact package
+feature when building a raw platform manifest):
 
 ```console
-cargo build --manifest-path <platform-or-board>/Cargo.toml --release --target <rust-target> --example <name>
+cargo build --manifest-path <platform-or-board>/Cargo.toml --release --target <rust-target> --features <package-feature> --example <name>
 ```
 
 ## Portable API example
@@ -110,8 +126,10 @@ the contracts.
 1. Ensure the MCU already has a self-contained platform crate under
    `platforms/<chip>/`. If it does not, add its `Cargo.toml`, runtime, memory
    layout, and required HAL implementations first.
-2. Create `boards/<board>/Cargo.toml`. Depend on `anyhal` with default features
-   disabled and on the matching platform crate by path.
+2. Identify the MCU's exact supplier package from the board schematic or BOM.
+   Create `boards/<board>/Cargo.toml`, depend on `anyhal` with default features
+   disabled, and enable exactly that package feature on the matching platform
+   dependency. Do not infer bonded pins from another package of the same MCU.
 3. Create `boards/<board>/mod.rs` containing typed aliases for the board's
    physical pins and onboard peripherals.
 4. Add `boards/<board>/memory.x` when the board's usable memory differs from the
@@ -135,6 +153,13 @@ the contracts.
 9. Run host tests, Clippy, the raw-platform build, the board's default build,
    and any artifact conversion before testing on hardware.
 
+When adding or refreshing Microchip package data, obtain the matching official
+device pack and regenerate its checked-in route catalog. For ATSAMD51P19A:
+
+```console
+powershell -ExecutionPolicy Bypass -File tools/extract-microchip-atdf-routes.ps1 -Atdf <device-pack>/samd51a/atdf/ATSAMD51P19A.atdf -Output resources/devices/microchip/atsamd51p19a-routes.csv
+```
+
 Adding another platform family follows the same catalog pattern in a new or
 existing `resources/*_platform` file. No new top-level Make recipe is required.
 
@@ -150,9 +175,10 @@ existing `resources/*_platform` file. No new top-level Make recipe is required.
 
 ## Roadmap
 
-- PWM and general-purpose timer contracts
+- Multi-channel, complementary, and dead-time PWM extensions
+- Multi-channel capture, frequency counting, and quadrature decoding
 - Advanced motor-control timers for flight-control and ESC workloads
-- ADC and DAC abstractions
+- Advanced ADC sampling and buffered/DMA-driven DAC waveforms
 - CAN and additional serial transports
 - Interrupt-driven and asynchronous peripheral variants
 - DMA-backed transfers

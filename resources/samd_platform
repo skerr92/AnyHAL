@@ -4,3 +4,4 @@ ANYHAL_PLATFORMS += samd51p19a
 anyhal.samd51p19a.manifest := platforms/samd51p19a/Cargo.toml
 anyhal.samd51p19a.triple := thumbv7em-none-eabihf
 anyhal.samd51p19a.example := samd51p19a_smoke
+anyhal.samd51p19a.features := package-tfbga120
