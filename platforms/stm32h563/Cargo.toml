@@ -5,6 +5,9 @@ edition.workspace = true
 license.workspace = true
 build = "build.rs"
 
+[features]
+package-lqfp144 = []
+
 [dependencies]
 anyhal = { path = "../..", default-features = false }
 stm32h5 = { version = "0.16.0", default-features = false, features = ["stm32h563"] }
@@ -15,4 +18,3 @@ path = "mod.rs"
 [[example]]
 name = "stm32h563_smoke"
 path = "examples/smoke.rs"
-

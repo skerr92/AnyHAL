@@ -7,7 +7,7 @@ build = "build.rs"
 
 [dependencies]
 anyhal = { path = "../..", default-features = false }
-anyhal-stm32h563 = { path = "../../platforms/stm32h563" }
+anyhal-stm32h563 = { path = "../../platforms/stm32h563", features = ["package-lqfp144"] }
 
 [lib]
 path = "mod.rs"

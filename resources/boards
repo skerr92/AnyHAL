@@ -10,3 +10,19 @@ anyhal.feather-samd51p19.artifact := uf2
 anyhal.nucleo-h563zi.manifest := boards/nucleo_h563zi/Cargo.toml
 anyhal.nucleo-h563zi.triple := thumbv8m.main-none-eabihf
 anyhal.nucleo-h563zi.example := nucleo_h563zi_blink
+
+.PHONY: flash-stm32h563zi
+flash-stm32h563zi:
+	make build ANYHAL_TARGET=nucleo-h563zi ANYHAL_EXAMPLE=$(anyhal.nucleo-h563zi.example)
+	@mkdir -p target/$(anyhal.nucleo-h563zi.triple)/release/artifacts
+	@cp target/$(anyhal.nucleo-h563zi.triple)/release/examples/$(anyhal.nucleo-h563zi.example) target/$(anyhal.nucleo-h563zi.triple)/release/artifacts/$(anyhal.nucleo-h563zi.example).elf
+	@if command -v arm-none-eabi-objcopy >/dev/null 2>&1; then \
+		arm-none-eabi-objcopy -O binary target/$(anyhal.nucleo-h563zi.triple)/release/examples/$(anyhal.nucleo-h563zi.example) target/$(anyhal.nucleo-h563zi.triple)/release/artifacts/$(anyhal.nucleo-h563zi.example).bin; \
+	elif command -v llvm-objcopy >/dev/null 2>&1; then \
+		llvm-objcopy -O binary target/$(anyhal.nucleo-h563zi.triple)/release/examples/$(anyhal.nucleo-h563zi.example) target/$(anyhal.nucleo-h563zi.triple)/release/artifacts/$(anyhal.nucleo-h563zi.example).bin; \
+	else \
+		echo "No objcopy tool found; ELF output is ready for STM32CubeProgrammer at target/$(anyhal.nucleo-h563zi.triple)/release/artifacts/$(anyhal.nucleo-h563zi.example).elf"; \
+	fi
+	@echo "STM32CubeProgrammer-ready outputs:"
+	@echo "  target/$(anyhal.nucleo-h563zi.triple)/release/artifacts/$(anyhal.nucleo-h563zi.example).elf"
+	@if [ -f target/$(anyhal.nucleo-h563zi.triple)/release/artifacts/$(anyhal.nucleo-h563zi.example).bin ]; then echo "  target/$(anyhal.nucleo-h563zi.triple)/release/artifacts/$(anyhal.nucleo-h563zi.example).bin"; fi
